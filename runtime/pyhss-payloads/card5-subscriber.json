@@ -1,0 +1,10 @@
+{
+  "imsi": "001012345678905",
+  "enabled": true,
+  "auc_id": "REPLACE_WITH_AUC_ID",
+  "default_apn": "REPLACE_WITH_INTERNET_APN_ID",
+  "apn_list": "REPLACE_WITH_INTERNET_APN_ID,REPLACE_WITH_IMS_APN_ID",
+  "msisdn": "12345678905",
+  "ue_ambr_dl": 0,
+  "ue_ambr_ul": 0
+}

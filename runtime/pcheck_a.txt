@@ -1,0 +1,6 @@
+﻿stamp=23:06:06
+PCSCF_PORTS:
+RTP_PORTS:
+RUNNING:
+pcscf=true
+rtpengine=true

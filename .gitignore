@@ -1,0 +1,8 @@
+# 可重建的 docker 镜像打包(约 2.8 GB)——切勿上传
+ims-images.tar
+
+# 本地 Claude Code 设置(非项目内容)
+.claude/
+
+# GitHub 建库时的截图(非项目内容)
+github.png

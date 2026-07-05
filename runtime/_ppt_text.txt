@@ -1,0 +1,828 @@
+===== slide1.xml =====
+  目录
+创新创业校企联合实践（软件工程）
+（分组
+03 
+）
+刘传昌
+计算机学院（国家示范性软件学院）
+网络服务基础研究中心
+
+===== slide2.xml =====
+创新创业校企联合实践考核要求
+ 
+基于 
+Open5GS
+（是一个开源项目，用于实现 
+5G 5GC
+和 
+4G LTE 
+移动核心网络）
++ 
+srsRAN
+（是一个
+4G/5G
+开源软件无线电套件，支持
+UE
+和
+eNodeB
+/
+gNodeB
+应用，可与第三方核心网络解决方案一起使用，构建完整的端到端移动通信网络）
++ USRP B210
+（是一款软件定义无线电平台，实现无线射频信号收发）
++ 
+真实手机（带可读写白卡），搭建一个端到端的
+4G/5G
+移动通信网络 。                                                 
+ 基于搭建好的移动核心网，与
+IMS
+解决方案（如
+Kamailio
+）集成以提供 
+VoLTE
+（
+Voice over LTE
+）和 
+VoNR
+（
+Voice over New Radio
+）等多媒体服务。                                                                                                    将实践
+2
+实现的
+Android
+客户端、实践
+1
+实现的
+PC
+客户端接入到上述网络，实现音视频互通。
+分组完成，具体分组与
+《
+面向特色化领域的实践
+2 》
+课程一致。
+考核需提交以下文件：
+小组实验报告
+个人实践报告
+实践汇报
+PPT
+
+===== slide3.xml =====
+验收评分标准
+实践成绩分
+5
+档
+
+===== slide4.xml =====
+验收安排
+验收时间：
+2026.7.8 
+下午，每组验收时间：
+25
+分钟，其中
+PPT
+汇报
+5
+分钟，系统演示与交流
+20
+分钟。
+验收顺序：与实践
+2
+的验收顺序一致。
+验收注意事项：
+实验报告上务必明确写明小组各成员的贡献度，贡献度可以相同，也可以不同。
+系统演示必须在
+4G/5G
+仿真环境下进行，需要
+2
+台手机
++1
+台
+PC
+。
+所有验收材料需要在
+2026
+年
+7
+月
+7
+日晚
+10
+点之前发给助教 徐祥。
+验收材料包括：小组实验报告、小组所有成员的个人实践报告、 项目汇报
+PPT
+。所有材料压缩后以 小组编号
+-
+联合实践
+命名。
+
+===== slide5.xml =====
+基础开源框架
+——Open5GS
+Open5GS
+是一个开源项目，用于实现 
+5G 
+和 
+4G LTE 
+移动核心网络，它提供了完整的 
+EPC
+（
+Evolved Packet Core
+，
+4G
+分组核心网）和 
+5GC
+（
+5G Core
+，
+5G
+核心网）组件。让开发者和研究人员能够搭建和测试移动通信网络环境。它继承自
+NextEPC
+，且社区支持良好，尤其是对于实验室环境和小型商业部署非常合适。
+EPC
+，其特点是仅有分组域而无电路域、基于全
+IP
+结构、控制与承载分离、网络结构扁平化。
+5GC
+，其控制面采用服务化架构设计（
+SBA
+，
+Service Based Architecture
+），将网络功能（
+NF
+）进行了拆分，而所有的 
+NF 
+又都通过接口接入到系统中，
+SBA 
+设计的目标是以软件服务重构核心网，实现核心网软件化、灵活化、开放化、智慧化。
+
+===== slide6.xml =====
+基础开源框架
+——Open5GS
+ SBA
+架构关键技术点：
+（
+1
+）服务的提供通过生产者（
+Producer
+）与消费者（
+Consumer
+）之间的消息交互来达成。交互模式简化为两种：
+Request-Response
+和
+Subscribe-Notify
+。
+（
+2
+）实现了服务的自动化注册和发现。
+NF 
+通过服务化接口，将自身的能力作为一种服务暴露到网络中，并被其他 
+NF 
+复用；
+NF 
+通过服务化接口的发现获取拥有所需 
+NF 
+服务的其它 
+NF 
+实例。这种注册和发现通过 
+5G 
+的新型网络功能 
+NRF 
+实现： 
+NRF 
+接收其它 
+NF 
+发来的服务注册信息，维护 
+NF 
+实例的相关信息和支持的服务信息； 
+NRF 
+接收其它 
+NF 
+发来的 
+NF 
+发现请求，返回对应的 
+NF 
+实例信息。
+（
+3
+）采用统一服务化接口协议。目前定义的接口协议栈，从下往上在传输层采用 
+TCP
+，在应用层采用 
+HTTP/2.0
+，在序列化协议方面采用 
+JSON
+，接口描述语言采用
+OpenAPI
+ 3.0
+，
+API
+的设计方式采用 
+RESTFul
+。
+
+===== slide7.xml =====
+基础开源框架
+——Open5GS
+
+===== slide8.xml =====
+基础开源框架
+——Open5GS
+AMF
+（
+Access and Mobility Management Function
+），负责
+5G 
+核心网的接入和移动管理。
+SMF
+（
+Session Management Function
+），负责会话管理。
+NSSF
+（
+The Network Slice Selection Function
+），网络切片选择功能。
+AUSF
+（
+Authentication Server Function
+），认证服务器功能。
+UDM
+（
+Unified Data Management
+），用户数据标识，统一数据管理。
+SMSF
+（
+Short Message Service Function
+），短消息服务功能。
+PCF
+（
+Policy Control function
+），策略控制功能。
+UPF
+（
+User plane function
+），用户面功能。
+
+===== slide9.xml =====
+基础开源框架
+——Open5GS
+Open5GS
+是一个
+4G/5G
+核心网络框架，可以与
+IMS
+解决方案（如
+Kamailio
+）集成以提供 
+VoLTE
+（
+Voice over LTE
+）和 
+VoNR
+（
+Voice over New Radio
+）等多媒体业务。
+
+===== slide10.xml =====
+IMS
+，其核心是
+SIP
+         SIP Proxy Server
+，
+IMS
+称为
+CSCF
+（
+ Call Session Control Function
+，呼叫会话控制功能
+），并且又把它分成多个子系统，其中代理
+CSCF
+（
+P-CSCF
+）直接与终端交互，然后交给查询
+CSCF
+（
+I-CSCF
+），
+I-CSCF
+会查询
+HSS
+数据，对用户名和密码进行认证，查询是否欠费，开通或关闭的业务，根据接入
+P-CSCF
+判断你是不是漫游。
+         整个呼叫过程，
+P-CSCF
+是不做复杂工作的，
+P-CSCF
+只负责接收
+SIP
+消息，它相当于对外联络点，然后
+SIP
+消息会到达
+I-CSCF
+，
+I-CSCF
+是运营商核心网络（就是运营商内部网络）的入口，它会根据
+HSS
+查找到用户属于哪个地区，会对应分配一个空闲的为该地区服务的
+S-CSCF
+，
+S-CSCF
+是真正的
+VoIP
+里
+Proxy Server
+的角色，
+S-CSCF
+完成用户注册认证和呼叫的路由处理，以及电话业务的触发（
+IMS
+称为
+AS
+，另外独立成一个子系统）。
+
+===== slide11.xml =====
+基础开源框架
+——
+Kamailio
+Kamailio
+是一个高性能的开源
+SIP (
+会话初始协议
+) 
+服务器，凭借其强大的功能和灵活的配置，已成为众多企业和个人用户的首选。无论是
+IP
+电话运营商、企业用户还是个人开发者，
+Kamailio
+都能为其提供稳定、安全的通信解决方案。
+Kamailio
+可以配置为
+IMS
+核心组件的一部分。
+Kamailio
+通过其模块提供了
+IMS
+功能的支持，包括
+P-CSCF
+、
+I-CSCF
+和
+S-CSCF
+等组件。
+
+===== slide12.xml =====
+基础开源框架
+——
+Kamailio
+的核心特性
+高性能与并发处理能力
+Kamailio
+设计用于处理大量并发呼叫，具有出色的性能和稳定性。它能够高效地管理并转发
+SIP
+消息，确保每一次通话都能够顺畅无阻地进行。无论是在处理大规模的并发请求，还是实现复杂的路由逻辑方面，
+Kamailio
+都能游刃有余。
+灵活性与可扩展性
+Kamailio
+支持多种配置和扩展，能够适应不同的应用场景。它提供了丰富的模块库，用户可以根据需求选择并配置相应的模块，以实现特定的功能。此外，
+Kamailio
+还支持自定义模块的开发，为用户提供了广阔的技术探索空间。
+
+===== slide13.xml =====
+基础开源框架
+——
+Kamailio
+的核心特性
+安全性
+Kamailio
+内置多种安全机制，确保通信的安全性。它支持
+TLS
+（
+Transport Layer Security
+，传输层安全协议）加密，可以保护
+SIP
+消息的传输过程不被窃取或篡改。同时，
+Kamailio
+还支持认证和授权功能，确保只有合法的用户才能访问和使用系统。
+丰富的功能与模块
+Kamailio
+不仅支持基本的
+SIP
+功能，如注册、呼叫、转接等，还提供了许多高级功能，如负载均衡、
+NAT
+穿越、媒体代理等。此外，它的模块库中包含了许多实用的模块，如数据库连接模块、脚本执行模块等，可以满足用户多样化的需求。
+
+===== slide14.xml =====
+基础开源框架
+——
+Kamailio
+的应用场景
+IP
+电话运营商
+Kamailio
+可以用于处理大规模的呼叫路由和用户管理，为
+IP
+电话运营商提供稳定可靠的解决方案。它能够高效地处理大量并发呼叫，确保通话的顺畅进行。
+企业通信
+Kamailio
+可以为企业提供内部
+VoIP
+通信解决方案。它支持多种通信方式，如语音通话、视频会议等，可以满足企业多样化的通信需求。
+个人用户
+       个人用户可以使用
+Kamailio
+搭建个人
+VoIP
+服务，实现低成本的语音通信。通过配置和定制模块，个人用户可以根据自己的需求来设置和使用系统。
+即时消息和在线状态管理
+Kamailio
+还支持实时消息传递和用户在线状态管理功能。它可以与其他即时通讯系统集成，为用户提供丰富的通信体验。
+
+===== slide15.xml =====
+基础开源框架
+——
+Doubango
+Doubango
+是一个开源的
+VoIP
+基础平台， 并能用于嵌入式和桌面系统的开源框架，该框架使用
+ANSCI-C
+编写，具有很好的可移植性。
+Doubango
+提供了一套丰富的开源库和框架，用于实现
+VoIP
+、视频会议和实时通信应用。它的一些组件可以用于构建
+IMS
+相关的功能，尤其是在客户端技术方面，可以作为工具库使用。
+
+===== slide16.xml =====
+基础开源框架
+——
+Doubango
+的核心技术
+支持完整的
+SIP
+（
+RFC 3261
+，
+3GPP TS 24.229 Rel-9
+）
+3GPP
+定义的安全机制，例如
+IMS-AKA
+IPv4/IPv6
+双栈通信
+多种传输协议：
+UDP
+、
+TCP
+和
+TLS
+NAT
+穿越（
+STUN
+、
+TURN
+和
+ICE
+）
+此外，
+Doubango
+还支持许多高级功能，如
+SigComp
+压缩、
+IPSec
+安全协议、 
+ENUM
+和
+SMS over IP
+等。
+
+===== slide17.xml =====
+基础开源框架
+——
+Doubango
+的应用场景
+Doubango
+提供了丰富的客户端与服务器端组件，涵盖多种操作系统平台：
+客户端：有针对
+Windows Phone 8/Surface Pro
+的
+Boghe
+，
+Android
+的
+IMSDroid
+以及
+iOS/Mac OS X
+的
+iDoubs
+应用。
+服务器端：包括
+WebRTC
+到
+SIP
+的智能网关
+webrtc2sip
+，
+SIP
+视频会议系统
+telepresence
+和
+Adobe Flash
+到
+IMS
+的连接器
+Flash2IMS
+。
+这些组件使得
+Doubango
+可以应用于实时通信、视频通话、多媒体会议、
+VoLTE
+及短信服务等多种场景。
+
+===== slide18.xml =====
+实验
+      将
+Open5GS
+、
+Kamailio
+集成在一起，
+可以搭建一个强大的
+ IMS 
+解决方案框架，尤其适用于实现
+ VoLTE
+、
+VoNR
+或其他多媒体服务。这样的框架可以提供从核心网络到应用层的全栈服务。
+（
+1
+）
+Open5GS
+作用：
+Open5GS 
+提供
+ 4G/5G 
+核心网络功能，包括
+ AMF
+、
+SMF
+、
+UPF
+（
+5G
+）或
+ MME
+、
+SGW
+、
+PGW
+（
+4G
+）等组件。
+集成点：
+它可以通过
+ N1/N2 
+接口（在
+ 5G 
+中）或
+ S1-MME 
+接口（在
+ 4G 
+中）与无线接入网络连接，并提供用户平面和控制平面功能。
+
+===== slide19.xml =====
+实验
+（
+2
+）
+Kamailio
+作用：
+Kamailio
+是一个强大的
+ SIP 
+服务器，可以配置为
+ IMS 
+的一部分，处理
+ SIP 
+信令和会话管理，具体可以承担
+ P-CSCF
+、
+I-CSCF 
+和
+ S-CSCF 
+的角色。
+集成点：
+在
+ IMS 
+架构中，
+Kamailio
+可以处理所有
+ SIP 
+相关的流程，并与
+ Open5GS 
+配合，实现诸如
+ VoLTE
+、
+VoNR
+的
+音视频
+通话功能。
+
+===== slide20.xml =====
+实验
+（
+3
+）
+Doubango
+ Telecom
+作用：
+Doubango
+提供了一系列
+ VoIP 
+和实时通信的工具和
+ SDK
+，可以用于开发支持
+ VoLTE 
+的客户端应用或实现其他多媒体通信服务。
+集成点：
+Doubango
+的客户端技术可以与
+Kamailio
+和
+ Open5GS 
+搭配使用，提供端到端的通信解决方案。
+
+===== slide21.xml =====
+实施步骤
+1. 
+搭建 
+Open5GS 
+网络
+    确保
+Open5GS 
+环境已经正确搭建并运行。注意
+Open5GS 
+的配置。
+2. 
+部署 
+IMS 
+系统
+--
+Kamailio
+    选择
+Kamailio
+作为开源 
+IMS 
+解决方案，然后在网络环境中部署。配置 
+IMS 
+以确保能处理 
+SIP 
+注册、会话建立和其他相关过程。需要配置如
+P-CSCF
+、
+I-CSCF
+、
+S-CSCF
+等组件，并确保能与
+Open5GS 
+交互。
+    注意：配置 
+DNS 
+解析
+    IMS 
+使用 
+DNS 
+来解析服务域名。因此，需要在 
+DNS 
+服务器上配置相应的记录，以便 
+IMS 
+组件和 
+SIP 
+终端能够找到彼此。
+
+===== slide22.xml =====
+实施步骤
+3. 
+集成和测试
+    确保 
+Open5GS 
+和 
+IMS 
+系统能够互相通信。需要在两个系统之间配置适当的路由和信令路径。对于 
+VoLTE 
+或 
+VoNR
+服务，确保从 
+Open5GS 
+到 
+IMS 
+的数据路径（用户面和控制面）都已正确设置。进行呼叫流程测试，包括注册、呼叫建立、媒体传输等，以验证整个系统的功能。
+4. 
+客户端配置
+    客户端设备（如支持 
+VoLTE 
+的手机或
+PC
+客户端）正确配置，包括 
+SIP 
+服务器、域名等。这些设备应能通过 
+Open5GS 
+网络连接到 
+IMS 
+系统。
+
+===== slide23.xml =====
+相关资料
+（
+1
+）
+Open5GS 
+的官网是 
+https://open5gs.org
+       可以找到关于 
+Open5GS 
+的详细信息，包括文档、安装指南、最新动态和社区论坛；
+       Open5GS 
+的源代码和一部分文档可以在其 
+GitHub 
+仓库中找到。访问 
+Open5GS
+的 
+GitHub 
+仓库下载最新的源代码，可以使用 
+Git 
+克隆仓库或直接下载 
+ZIP 
+文件
+https://github.com/open5gs/open5gs
+       Open5GS GitHub 
+论坛：
+             https://github.com/open5gs/open5gs/discussions
+
+===== slide24.xml =====
+相关资料
+（
+2
+）
+Kamailio
+的官网是 
+https://www.kamailio.org
+       可以找到关于 
+Kamailio
+的综合信息，包括文档、教程、安装指南、配置示例以及社区论坛。
+       访问 
+Kamailio
+的 
+GitHub 
+仓库可以下载源码：
+https://github.com/kamailio/kamailio
+
+===== slide25.xml =====
+相关资料
+（
+3
+）
+Doubango
+ Telecom
+官网是 
+https://www.doubango.org 
+       可以找到关于 
+Doubango
+ Telecom 
+提供的各种通信解决方案和产品的信息，包括开源项目、商业产品以及相关的技术文档和支持信息。
+Doubango
+的 
+SIP/IMS/VoIP SDKs
+，网站上通常会有指向相应 
+GitHub 
+仓库的链接，可以从那里获取源代码。
+
+===== slide26.xml =====
+相关资料
+（
+1
+）
+https://blog.51cto.com/u_12204/11172682
+（
+2
+）
+https://open5gs.org/open5gs/docs/tutorial/03-VoLTE-dockerized/
+（
+3
+）
+https://huaweicloud.csdn.net/6707d766e2ce0119e0a25c7b.html#devmenu9
+（
+4
+）
+https://blog.csdn.net/zhonglinzhang/article/details/110952171
+（
+5
+）
+https://blog.csdn.net/Lid_23/article/details/131883668
+（
+6
+）
+https://blog.csdn.net/u010178611/article/details/81512777
+
+===== slide27.xml =====
+THANKS!
+

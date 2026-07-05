@@ -1,0 +1,30 @@
+﻿=== IMS stack published host ports (docker ps) ===
+pcscf  ->  0.0.0.0:5060->5060/tcp, 0.0.0.0:5060->5060/udp, [::]:5060->5060/tcp, [::]:5060->5060/udp
+scscf  ->  3870/tcp, 3870/sctp, 6060/tcp, 6060/udp
+icscf  ->  3869/tcp, 3869/sctp, 4060/tcp, 4060/udp
+pyhss  ->  0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+mysql  ->  3306/tcp
+rtpengine  ->  0.0.0.0:49000-49100->49000-49100/udp, [::]:49000-49100->49000-49100/udp
+dns  ->  53/udp
+srsue_zmq  ->  2000-2001/tcp
+srsenb_zmq  ->  2000-2001/tcp, 2152/udp, 36412/sctp
+mme  ->  36412/sctp, 0.0.0.0:36412->36412/udp, [::]:36412->36412/udp
+sgwu  ->  0.0.0.0:2152->2152/udp, [::]:2152->2152/udp
+sgwc  ->  2123/udp, 8805/udp
+upf  ->  2152/udp, 8805/udp, 9091/tcp
+osmomsc  ->  2775/tcp, 29118/sctp
+smsc  ->  7090/tcp, 7090/udp
+pcrf  ->  3873/sctp, 3873/tcp, 5868/sctp, 5868/tcp
+webui  ->  0.0.0.0:9999->9999/tcp, [::]:9999->9999/tcp
+hss  ->  3868/sctp, 3868/tcp, 5868/sctp, 5868/tcp
+smf  ->  3868/sctp, 3868/tcp, 5868/tcp, 2123/udp, 7777/tcp, 8805/udp, 5868/sctp, 9091/tcp
+osmohlr  ->  4222/tcp
+metrics  ->  0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+grafana  ->  0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+mongo  ->  27017/tcp, 27017/udp
+
+=== Host listeners on 8081 / 8080 / 9999 / 3000 (TCP) ===
+TCP    0.0.0.0:3000           0.0.0.0:0              LISTENING       22592
+TCP    0.0.0.0:8080           0.0.0.0:0              LISTENING       22592
+TCP    0.0.0.0:9999           0.0.0.0:0              LISTENING       22592
+TCP    10.129.164.17:64575    49.7.253.58:8080       ESTABLISHED     21216

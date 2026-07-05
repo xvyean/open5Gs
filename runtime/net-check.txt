@@ -1,0 +1,14 @@
+﻿=== 本机真实 IPv4 ===
+172.17.192.1  [vEthernet (WSL (Hyper-V firewall))]
+192.168.74.1  [VMware Network Adapter VMnet8]
+192.168.70.1  [VMware Network Adapter VMnet1]
+26.185.138.94  [Radmin VPN]
+10.129.164.17  [WLAN 3]
+172.18.0.1  [singbox_tun]
+
+=== .env DOCKER_HOST_IP ===
+DOCKER_HOST_IP=10.129.164.17
+
+=== docker port pcscf ===
+
+=== docker port rtpengine ===

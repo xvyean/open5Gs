@@ -1,0 +1,2 @@
+[relay] host=10.129.164.17 -> wsl=172.17.204.81
+[relay] bound 102/102 ports (SIP 5060 + RTP 49000-49100)

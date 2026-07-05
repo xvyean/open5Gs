@@ -1,0 +1,10 @@
+{
+  "imsi": "001012345678906",
+  "msisdn": "12345678906",
+  "sh_profile": "string",
+  "scscf_peer": "scscf.ims.mnc001.mcc001.3gppnetwork.org",
+  "msisdn_list": "[12345678906]",
+  "ifc_path": "default_ifc.xml",
+  "scscf": "sip:scscf.ims.mnc001.mcc001.3gppnetwork.org:6060",
+  "scscf_realm": "ims.mnc001.mcc001.3gppnetwork.org"
+}

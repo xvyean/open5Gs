@@ -1,0 +1,7 @@
+services:
+  mme:
+    ports:
+      - "36412:36412/sctp"
+  sgwu:
+    ports:
+      - "2152:2152/udp"

@@ -1,0 +1,50 @@
+﻿===================================================================
+ Open5GS + Kamailio IMS + srsRAN 实验环境自检报告
+ 时间: 2026-07-04 22:51:57
+===================================================================
+
+--- 1. Docker 引擎 ---
+[PASS] Docker 引擎可用  ::  Server 28.5.1
+
+--- 2. 核心网 / IMS 网元（VoLTE 关键路径）---
+[PASS] 容器 mongo  ::  State.Running=true
+[PASS] 容器 mysql  ::  State.Running=true
+[PASS] 容器 webui  ::  State.Running=true
+[PASS] 容器 hss  ::  State.Running=true
+[PASS] 容器 mme  ::  State.Running=true
+[PASS] 容器 sgwc  ::  State.Running=true
+[PASS] 容器 sgwu  ::  State.Running=true
+[PASS] 容器 smf  ::  State.Running=true
+[PASS] 容器 upf  ::  State.Running=true
+[PASS] 容器 pcrf  ::  State.Running=true
+[PASS] 容器 pcscf  ::  State.Running=true
+[PASS] 容器 icscf  ::  State.Running=true
+[PASS] 容器 scscf  ::  State.Running=true
+[PASS] 容器 pyhss  ::  State.Running=true
+[PASS] 容器 dns  ::  State.Running=true
+[PASS] 容器 rtpengine  ::  State.Running=true
+
+--- 3. 附加网元（监控 / CS 域，仅提示不计分）---
+  [up]   grafana
+  [up]   metrics
+  [up]   osmohlr
+  [up]   osmomsc
+  [up]   smsc
+
+--- 4. 接口与信令连通性 ---
+[PASS] MME S1AP 监听 (SCTP 36412)  ::  日志出现 s1ap_server()
+[PASS] MME<->HSS Diameter 已连接  ::  日志出现 CONNECTED TO 'hss...'
+[PASS] pyHSS OAM 存活 (:8080/oam/ping)  ::  {"result": "OK"}
+
+[PASS] Open5GS WebUI (:9999)  ::  HTTP 200
+
+--- 5. 关键修复核对 ---
+[PASS] P-CSCF udp_mtu 已注释(终呼477修复)  ::  无生效 udp_mtu 行
+
+--- 6. ZMQ 过渡验证（srsUE attach）---
+[PASS] srsUE 已 attach 并拿到 IP  ::  Network attach successful. IP: 192.168.100.2
+
+===================================================================
+ 结果: 23 通过 / 0 失败  (共 23 项计分检查)
+ 结论: 全部通过，环境健康。
+===================================================================

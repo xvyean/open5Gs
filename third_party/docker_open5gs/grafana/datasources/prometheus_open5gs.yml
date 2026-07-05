@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: Open5Gs
+    type: prometheus
+    access: proxy
+    url: http://${METRICS_IP}:${METRICS_BIND_PORT}
+    disableDeletion: false
+    editable: true

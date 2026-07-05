@@ -1,0 +1,53 @@
+# =============================================================================
+# client-access override：让 Windows 宿主机 + 局域网设备（自研 SIP 软电话）
+# 能够接入 docker 内网中的 IMS（P-CSCF SIP 信令 + rtpengine RTP 媒体）。
+#
+# 背景：Docker Desktop (WSL2 后端) 不路由容器网段 172.22.0.x，宿主机/局域网
+# 设备只能通过“发布到宿主机的端口”访问容器。本 override 做三件事：
+#   1. pcscf：把 5060/udp + 5060/tcp 发布到宿主机 0.0.0.0（软电话的信令入口）。
+#   2. rtpengine：把 RTP 端口窗口收窄为 49000-49100（上游默认 49000-50000，
+#      Docker Desktop 发布上千个 UDP 端口会非常慢甚至失败），并发布到宿主机。
+#      PORT_MIN/PORT_MAX 与 ports 映射必须保持一致。
+#   3. rtpengine：通过 INTERFACE=<容器IP>!<公告IP> 语法让它在改写 SDP 时
+#      公告宿主机 LAN IP（rtpengine 的 advertised-address 语法，见
+#      rtpengine/rtpengine_init.sh 中 --interface=$INTERFACE）。
+#      DOCKER_HOST_IP 来自 third_party/docker_open5gs/.env（当前 10.129.164.17，
+#      由 scripts/configure-env.sh 自动刷新）。
+#
+# 有意不做的事：
+#   - 不启用 pcscf 的 SIP 层 advertise（pcscf.cfg 里被注释的
+#     "listen=udp:PCSCF_IP:5060 advertise PCSCF_PUB_IP:5060"）。自研客户端
+#     不解析 Via/Record-Route/Contact 做路由，所有请求都直发所配置的
+#     服务器:5060，因此 SIP 层公告宿主机 IP 没有收益；反而会把内网真机/
+#     srsUE 的信令路径也改成走宿主机回环，风险更大。
+#   - 不发布 rtpengine 的 NG 控制口 2223（仅 pcscf 内网使用）。
+#
+# 用法（与 start-core-ims.ps1 相同的文件顺序，追加本文件）：
+#   docker compose `
+#     -f third_party\docker_open5gs\4g-volte-deploy.yaml `
+#     -f config\docker-compose.enb-external.override.yaml `
+#     -f config\docker-compose.client-access.override.yaml `
+#     --env-file third_party\docker_open5gs\.env `
+#     up -d pcscf rtpengine
+# 或直接运行 scripts\apply-client-access.ps1。
+# 还原：重新运行 scripts\start-core-ims.ps1（不带本文件即可回到原配置）。
+# =============================================================================
+services:
+  pcscf:
+    ports:
+      - "5060:5060/udp"
+      - "5060:5060/tcp"
+  rtpengine:
+    # environment 按变量名与基础文件合并；这里整组重申以求直观。
+    # 仅 INTERFACE / PORT_MIN / PORT_MAX 与上游 4g-volte-deploy.yaml 不同。
+    environment:
+      - TABLE=0
+      - INTERFACE=${RTPENGINE_IP}!${DOCKER_HOST_IP}
+      - LISTEN_NG=${RTPENGINE_IP}:2223
+      - PIDFILE=/run/ngcp-rtpengine-daemon.pid
+      - PORT_MIN=49000
+      - PORT_MAX=49100
+      - NO_FALLBACK=no
+      - TOS=184
+    ports:
+      - "49000-49100:49000-49100/udp"

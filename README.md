@@ -70,7 +70,7 @@ shijian/
 | `scripts/start-core-ims.ps1` / `.sh` | 启动 Open5GS EPC + Kamailio IMS |
 | `scripts/provision-subscribers.ps1` / `.sh` | 写入 Open5GS HSS 用户 |
 | `scripts/provision-pyhss.ps1`(或 `provision_pyhss.py`) | 写入 pyHSS APN/AuC/subscriber/IMS-subscriber |
-| `scripts/start-zmq-sim.ps1` / `stop-zmq-sim.ps1` | ZMQ 虚拟射频仿真(无硬件即可跑通 attach) |
+| `scripts/start-zmq-sim.sh` / `stop-zmq-sim.sh`（WSL 原生 dockerd）· `.ps1`（Docker Desktop） | ZMQ 虚拟射频仿真(无硬件即可跑通 attach) |
 | `scripts/ims_ue.py` | 端到端 VoLTE 呼叫测试(caller/callee) |
 | `scripts/apply-client-access.ps1` | 应用"客户端接入" override(发布 5060,rtpengine 通告局域网IP) |
 | `scripts/udp_relay_host_to_wsl.py` | 主机→WSL 的 UDP 中继(供别的电脑/手机 WiFi 接入) |
@@ -171,24 +171,30 @@ docker logs mme    | tail # 看到 S1AP 36412 已监听、已连 HSS
 
 用 srsRAN 的 ZMQ 虚拟射频让 UE(卡5,身份取自 `docker_open5gs/.env` 的 UE1)附着,再做端到端 VoLTE 呼叫:
 
-```powershell
-# 5A.1 起虚拟射频(核心网须已在运行)
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-zmq-sim.ps1
+```bash
+# 5A.1 起虚拟射频(核心网须已在运行)。核心网跑在 WSL 原生 dockerd → 用 .sh(同引擎);
+#      脚本会自动等到 "Network attach successful"。
+bash scripts/start-zmq-sim.sh
+#   (若核心网是用 Docker Desktop/Windows 起的,才改用: powershell -File .\scripts\start-zmq-sim.ps1)
 ```
 
 ```bash
-# 5A.2 验证附着
+# 5A.2 验证附着(start-zmq-sim.sh 已自动等到这句;也可手动跟)
 docker logs -f srsue_zmq   # "Found PLMN Id=00101" -> "RRC Connected" -> "Network attach successful. IP: 192.168.100.x"
-docker exec srsue_zmq ping -c3 -I tun_srsue 192.168.100.1   # ping 通 APN 网关
+#   注:ZMQ 仅控制面(attach)可靠;用户面 ping(192.168.100.1 / 8.8.8.8)在本环境不通,
+#       不影响 attach、也不影响下面走 docker 网的呼叫。真机用户面待 B210 OTA 验(见 STATUS.md 2026-07-06)。
 
-# 5A.3 端到端 VoLTE 呼叫(两个角色跑在不同容器,拿到不同源 IP,模拟 2 部终端)
-#      被叫(卡6)自动应答;主叫(卡5)注册后 INVITE 卡6,完成 200/ACK/BYE
-python3 scripts/ims_ue.py callee 001012345678906 000102030405060708090A0C0B0D0E0F &
-python3 scripts/ims_ue.py caller 001012345678905 000102030405060708090A0C0B0D0E0F 001012345678906
+# 5A.3 端到端 VoLTE 呼叫(两个容器各拿独立源 IP,模拟 2 部终端;
+#      须在 docker 网内跑——宿主机直连不到 172.22.0.x)
+KI=000102030405060708090A0C0B0D0E0F; S="$(pwd)/scripts/ims_ue.py"; N=docker_open5gs_default
+docker run -d  --name ue6 --network $N --entrypoint python3 -v "$S":/ims_ue.py:ro docker_pyhss /ims_ue.py callee 001012345678906 $KI 45
+docker run --rm --name ue5 --network $N --entrypoint python3 -v "$S":/ims_ue.py:ro docker_pyhss /ims_ue.py caller 001012345678905 $KI 001012345678906
 # 预期:REGISTER 200 -> INVITE -> 200 OK(rtpengine 锚定 audio+video)-> ACK -> BYE 200
+# 也可按电话号拨:把末尾 001012345678906 换成 MSISDN 12345678906(靠 msisdn_list 隐式注册路由,无需 ENUM)
+docker rm -f ue6 >/dev/null 2>&1
 ```
 
-停止:`powershell -File .\scripts\stop-zmq-sim.ps1`。
+停止:`bash scripts/stop-zmq-sim.sh`(WSL) 或 `powershell -File .\scripts\stop-zmq-sim.ps1`(Docker Desktop)。
 
 #### 路径 B · 真实射频(USRP B210 + 真机)
 
